@@ -21,7 +21,7 @@ export function locateFromCDN(load: { address: string }): string {
 }
 
 export function translateForCDN(load: any): any {
-  const { address, name, source } = load;
+  const baseAddress = load.address.split('/module.js')[0];
 
   // console.log('--------------------- translateForCDN ------------------------');
   // console.log({ load });
@@ -33,5 +33,9 @@ export function translateForCDN(load: any): any {
   // http://plugin-cdn.storageapi.google.com/grafana-worldmap-panel/0.2.2/grafana-worldmap-panel/data <-- proposed cdn path
   // public/plugins -> http://plugin-cdn.storageapi.google.com/grafana-worldmap-panel/0.2.2 <-- replacement
 
-  return load;
+  // @ts-ignore
+  load.source = load.source.replace(/(\/?)public\/plugins/g, baseAddress);
+
+  debugger;
+  return load.source;
 }
