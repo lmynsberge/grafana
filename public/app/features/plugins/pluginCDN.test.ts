@@ -22,7 +22,7 @@ describe('Plugin CDN', () => {
 
     it('should update the default local path to use the CDN path', () => {
       const translatedLoad = translateForCDN({ ...load, source: 'public/plugins/template.html' });
-      expect(translatedLoad.source).toBe(
+      expect(translatedLoad).toBe(
         'https://plugin-cdn.storage.googleapis.com/grafana-worldmap-panel/0.3.3/grafana-worldmap-panel/template.html'
       );
     });
@@ -37,7 +37,7 @@ describe('Plugin CDN', () => {
         const img = "<img src='https://plugin-cdn.storage.googleapis.com/grafana-worldmap-panel/0.3.3/grafana-worldmap-panel/data/myimage.jpg'>";
       `;
       const translatedLoad = translateForCDN({ ...load, source });
-      expect(translatedLoad.source).toBe(expectedSource);
+      expect(translatedLoad).toBe(expectedSource);
     });
 
     it('should cater for local paths starting with a slash', () => {
@@ -50,7 +50,31 @@ describe('Plugin CDN', () => {
         const img = "<img src='https://plugin-cdn.storage.googleapis.com/grafana-worldmap-panel/0.3.3/grafana-worldmap-panel/data/myimage.jpg'>";
       `;
       const translatedLoad = translateForCDN({ ...load, source });
-      expect(translatedLoad.source).toBe(expectedSource);
+      expect(translatedLoad).toBe(expectedSource);
+    });
+
+    it('should cater for angular templateUrl', () => {
+      const source = `
+        e.templateUrl="partials/module.html"
+      `;
+      const expectedSource = `
+        e.templateUrl="https://plugin-cdn.storage.googleapis.com/grafana-worldmap-panel/0.3.3/grafana-worldmap-panel/partials/module.html"
+      `;
+
+      const translatedLoad = translateForCDN({ ...load, source });
+      expect(translatedLoad).toBe(expectedSource);
+    });
+
+    it('should cater for angular templateUrl2', () => {
+      const source = `
+        e.templateUrl:"partials/module.html"
+      `;
+      const expectedSource = `
+        e.templateUrl:"https://plugin-cdn.storage.googleapis.com/grafana-worldmap-panel/0.3.3/grafana-worldmap-panel/partials/module.html"
+      `;
+
+      const translatedLoad = translateForCDN({ ...load, source });
+      expect(translatedLoad).toBe(expectedSource);
     });
   });
 });

@@ -1,16 +1,14 @@
-import { load } from 'rudder-sdk-js';
-
 // ⚠️ POC plugin CDN stuffs! ⚠️
 export const cdnHost = 'https://plugin-cdn.storage.googleapis.com';
 
-function extractPluginDeets(address: string) {
-  const match = /public\/plugin-cdn\/(.+)\/(.+)\/module\.js/i.exec(address);
-  if (!match) {
-    return;
-  }
-  const [_, name, version] = match;
-  return { name, version };
-}
+// function extractPluginDeets(address: string) {
+//   const match = /public\/plugin-cdn\/(.+)\/(.+)\/module\.js/i.exec(address);
+//   if (!match) {
+//     return;
+//   }
+//   const [_, name, version] = match;
+//   return { name, version };
+// }
 
 export function locateFromCDN(load: { address: string }): string {
   const { address } = load;
@@ -19,6 +17,8 @@ export function locateFromCDN(load: { address: string }): string {
   // https://plugin-cdn.storage.googleapis.com/pluginID/version/module
   return `${cdnHost}/${pluginPath[1]}`;
 }
+
+const templateUrlRegex = /templateUrl\s*([:=])\s*(['"`](.*?)['"`])/g;
 
 export function translateForCDN(load: any): any {
   const baseAddress = load.address.split('/module.js')[0];
@@ -34,8 +34,11 @@ export function translateForCDN(load: any): any {
   // public/plugins -> http://plugin-cdn.storageapi.google.com/grafana-worldmap-panel/0.2.2 <-- replacement
 
   // @ts-ignore
-  load.source = load.source.replace(/(\/?)public\/plugins/g, baseAddress);
+  load.source = load.source
+    .replace(/(\/?)public\/plugins/g, baseAddress)
+    .replace(templateUrlRegex, (match: string, operator: string, quotedUrl: string, url: string) => {
+      return `templateUrl${operator}"${baseAddress}/${url}"`;
+    });
 
-  debugger;
   return load.source;
 }

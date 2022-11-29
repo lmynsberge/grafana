@@ -30,6 +30,10 @@ function pluginDirectiveLoader($compile: any, $http: any, $templateCache: any, $
     if (templateUrl.indexOf('public') === 0) {
       return templateUrl;
     }
+    // ⚠️ POC plugin CDN stuffs! ⚠️
+    if (templateUrl.startsWith('http')) {
+      return templateUrl;
+    }
     return baseUrl + '/' + templateUrl;
   }
 
