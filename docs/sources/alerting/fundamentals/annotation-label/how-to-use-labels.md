@@ -30,7 +30,7 @@ This means that label keys must only contain **ASCII letters**, **numbers**, as 
 Any invalid characters will be removed or replaced by the Grafana alerting engine before being sent to the external Alertmanager according to the following rules:
 
 - `Whitespace` will be removed.
-- `ASCII characters` will be replaced with `_`.
+- `non-ASCII letters and numbers` will be replaced with `_`.
 - `All other characters` will be replaced with their lower-case hex representation. If this is the first character it will be prefixed with `_`.
 
 Example: A label key/value pair `Alert! 🔔="🔥"` will become `Alert_0x1f514="🔥"`.
